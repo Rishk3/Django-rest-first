@@ -2,14 +2,34 @@ from django.http import JsonResponse, HttpResponse
 import json
 from products.models import Product
 from django.forms.models import model_to_dict
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from products.serializers import ProductSerializer
 
+@api_view(["POST"])
 def api_home (request,*args,**kwargs):
-
-    model_data=Product.objects.all().order_by('?').first()
-    data={}
-    if model_data:
-       data=model_to_dict(model_data,fields=['id','title','price'])
-    return JsonResponse(data)
+    data=request.data
+    serializer=ProductSerializer(data=data)
+    if serializer.is_valid(raise_exception=True):
+      # data = serializer.save()
+      print(data)
+      data=serializer.data
+      return Response(serializer.data)
+    return Response({'invalid':'not A GOd data'},status=400)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+    # instance=Product.objects.all().order_by('?').first()
+    # data={}
+    # if instance:
+    #   #  data=model_to_dict(instance,fields=['id','title','price','sale_price'])
+    #    data= ProductSerializers(instance).data
+    
+    # return JsonResponse(data)
 
 
     # body = request.body # byte string of JSON data
